@@ -3,13 +3,13 @@ import { Context } from "../index";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { NavLink, useNavigate } from "react-router-dom"; // Заменили useHistory на useNavigate
-import { ADMIN_ROUTE, LOGIN_ROUTE, SHOP_ROUTE } from "../utils/consts";
+import { ADMIN_ROUTE, LOGIN_ROUTE, SHOP_ROUTE, BASKET_ROUTE } from "../utils/consts";
 import { Button } from "react-bootstrap";
 import { observer } from "mobx-react-lite";
 import Container from "react-bootstrap/Container";
 
 const NavBar = observer(() => {
-    const { user } = useContext(Context);
+    const { user, basket } = useContext(Context);
     const navigate = useNavigate(); // Используем useNavigate вместо useHistory
 
     const logOut = () => {
@@ -34,6 +34,16 @@ const NavBar = observer(() => {
                                 Админ панель
                             </Button>
                         )}
+                        {user.isAuth && (
+                            <Button 
+                                variant="outline-light" 
+                                onClick={() => navigate(BASKET_ROUTE)}
+                                className="ms-2"
+                            >
+                                Корзина ({basket.basket.length})
+                            </Button>
+                        )}
+
                         <Button
                             variant={"outline-light"}
                             onClick={() => logOut()}

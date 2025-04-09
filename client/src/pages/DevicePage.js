@@ -1,16 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import bigStar from '../assets/bigStar.png';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchOneDevice } from "../http/deviceAPI";
+import { addToBasket } from "../http/basketAPI"; // Убрали неиспользуемый fetchBasket
+import { Context } from "../index";
+import { LOGIN_ROUTE } from "../utils/consts";
 
 const DevicePage = () => {
     const [device, setDevice] = useState({ info: [] });
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { user, basket } = useContext(Context);
 
     useEffect(() => {
         fetchOneDevice(id).then(data => setDevice(data));
-    }, [id]); 
+    }, [id]);
+
+    const handleAddToBasket = async () => {
+        if (!user.isAuth) return navigate(LOGIN_ROUTE);
+        
+        try {
+            const response = await addToBasket(device.id);
+            console.log("Полный ответ сервера:", response);
+            
+            // Используем правильное имя поля (basket_devices вместо basketDevices)
+            basket.setBasket(response.basket_devices || []);
+            
+            alert('Товар добавлен в корзину!');
+        } catch (e) {
+            console.error("Ошибка добавления:", e);
+            alert(e.response?.data?.message || 'Ошибка');
+        }
+    };
+
     return (
         <Container className="mt-3">
             <Row>
@@ -50,7 +73,12 @@ const DevicePage = () => {
                         }}
                     >
                         <h3>От: {device.price} руб.</h3>
-                        <Button variant="outline-dark">Добавить в корзину</Button>
+                        <Button 
+                            variant="outline-dark"
+                            onClick={handleAddToBasket}
+                        >
+                            Добавить в корзину
+                        </Button>
                     </Card>
                 </Col>
             </Row>
