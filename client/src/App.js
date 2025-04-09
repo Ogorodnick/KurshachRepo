@@ -11,20 +11,29 @@ const App = observer(() => {
     const { user } = useContext(Context);
     const [loading, setLoading] = useState(true);
 
-    // Выносим функцию проверки авторизации в отдельный колбэк
     const checkAuth = useCallback(async () => {
         try {
-            await check();
-            user.setUser(true);
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No token');
+            }
+            const userData = await check();
+            user.setUser(userData); // Сохраняем данные пользователя
             user.setIsAuth(true);
+        } catch (e) {
+            localStorage.removeItem('token'); // Очищаем токен при ошибке
+            user.setUser({});
+            user.setIsAuth(false);
         } finally {
             setLoading(false);
         }
-    }, [user]); // Зависимости колбэка
+    }, [user]);
 
     useEffect(() => {
         checkAuth();
-    }, [checkAuth]); // Теперь используем колбэк как зависимость
+    }, [checkAuth]);
+
+ // Теперь используем колбэк как зависимость
 
     if (loading) {
         return (
