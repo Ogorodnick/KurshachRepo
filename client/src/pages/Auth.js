@@ -1,45 +1,55 @@
-import React, { useContext, useState } from 'react';
-import { Container, Form } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/Row";
-import { NavLink, useLocation, useNavigate } from "react-router-dom"; // Заменяем useHistory на useNavigate
-import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from "../utils/consts";
-import { login, registration } from "../http/userAPI";
-import { observer } from "mobx-react-lite";
-import { Context } from "../index";
+import React, {useContext, useState} from 'react';
+import {Container, Form, Card, Button, Row, Spinner, Alert} from "react-bootstrap";
+import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import {LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE} from "../utils/consts";
+import {login, registration} from "../http/userAPI";
+import {observer} from "mobx-react-lite";
+import {Context} from "../index";
 
 const Auth = observer(() => {
-    const { user } = useContext(Context);
+    const {user} = useContext(Context);
     const location = useLocation();
-    const navigate = useNavigate(); // Используем useNavigate вместо useHistory
+    const navigate = useNavigate();
     const isLogin = location.pathname === LOGIN_ROUTE;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const click = async () => {
         try {
+            setLoading(true);
+            setError('');
             let data;
             if (isLogin) {
                 data = await login(email, password);
             } else {
                 data = await registration(email, password);
             }
-            user.setUser(data.user); // Исправлено: передаем данные пользователя
+            user.setUser(data);
             user.setIsAuth(true);
-            navigate(SHOP_ROUTE); // Заменяем history.push на navigate
+            navigate(SHOP_ROUTE);
         } catch (e) {
-            alert(e.response.data.message);
+            // Улучшенная обработка ошибок
+            setError(e.response?.data?.message || e.message || 'Произошла ошибка');
+        } finally {
+            setLoading(false);
         }
     };
 
+    if (loading) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center" style={{height: window.innerHeight - 54}}>
+                <Spinner animation="border" variant="primary" />
+            </Container>
+        );
+    }
+
     return (
-        <Container
-            className="d-flex justify-content-center align-items-center"
-            style={{ height: window.innerHeight - 54 }}
-        >
-            <Card style={{ width: 600 }} className="p-5">
+        <Container className="d-flex justify-content-center align-items-center" style={{height: window.innerHeight - 54}}>
+            <Card style={{width: 600}} className="p-5">
                 <h2 className="m-auto">{isLogin ? 'Авторизация' : "Регистрация"}</h2>
+                {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
                 <Form className="d-flex flex-column">
                     <Form.Control
                         className="mt-3"
@@ -65,8 +75,9 @@ const Auth = observer(() => {
                             </div>
                         }
                         <Button
-                            variant={"outline-success"}
+                            variant="outline-success"
                             onClick={click}
+                            disabled={loading}
                         >
                             {isLogin ? 'Войти' : 'Регистрация'}
                         </Button>
