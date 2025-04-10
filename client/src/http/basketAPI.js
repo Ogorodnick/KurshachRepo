@@ -23,5 +23,5 @@ export const addToBasket = async (deviceId) => {
 
 export const removeFromBasket = async (id) => {
     const {data} = await $authHost.delete('api/basket/' + id)
-    return data
+    return data;
 }

@@ -28,11 +28,12 @@ const Basket = observer(() => {
     const handleRemove = async (id) => {
         try {
             await removeFromBasket(id);
-            await fetchBasketData();
+            basket.removeItem(id); // Используем новый метод хранилища
         } catch (e) {
             alert(e.response?.data?.message || 'Ошибка при удалении');
         }
     };
+
 
     if (!user.isAuth) {
         return (

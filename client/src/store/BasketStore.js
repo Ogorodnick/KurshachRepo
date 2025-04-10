@@ -9,8 +9,13 @@ export default class BasketStore {
     setBasket(items) {
         this._basket = items.map(item => ({ 
             ...item,
-            device: toJS(item.device) // Важно: делаем device наблюдаемым
+            device: toJS(item.device)
         }));
+    }
+
+    // Добавляем метод для удаления элемента из корзины
+    removeItem(id) {
+        this._basket = this._basket.filter(item => item.id !== id);
     }
 
     get basket() {
