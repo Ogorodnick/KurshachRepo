@@ -6,9 +6,11 @@ import { observer } from "mobx-react-lite";
 import { Context } from "./index";
 import { check } from "./http/userAPI";
 import { Spinner } from "react-bootstrap";
+import { fetchBasket } from "./http/basketAPI"; // Добавьте этот импорт
 
+// App.js
 const App = observer(() => {
-    const { user } = useContext(Context);
+    const { user, basket } = useContext(Context); // Добавляем basket
     const [loading, setLoading] = useState(true);
 
     const checkAuth = useCallback(async () => {
@@ -18,16 +20,22 @@ const App = observer(() => {
                 throw new Error('No token');
             }
             const userData = await check();
-            user.setUser(userData); // Сохраняем данные пользователя
+            user.setUser(userData);
             user.setIsAuth(true);
+            
+            // Добавляем загрузку корзины после успешной аутентификации
+            const basketData = await fetchBasket();
+            basket.setBasket(basketData);
         } catch (e) {
-            localStorage.removeItem('token'); // Очищаем токен при ошибке
+            localStorage.removeItem('token');
             user.setUser({});
             user.setIsAuth(false);
+            basket.setBasket([]); // Очищаем корзину при ошибке
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, [user, basket]); // Добавляем basket в зависимости
+    // ... остальной код
 
     useEffect(() => {
         checkAuth();

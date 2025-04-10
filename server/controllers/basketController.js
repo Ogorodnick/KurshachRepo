@@ -4,28 +4,34 @@ const ApiError = require('../error/ApiError')
 class BasketController {
     async getBasket(req, res) {
         try {
-            const basket = await Basket.findOne({
+            // 1. Находим или создаём корзину
+            const [basket] = await Basket.findOrCreate({
                 where: { userId: req.user.id },
+                defaults: { userId: req.user.id },
                 include: [{
                     model: BasketDevice,
+                    as: 'basket_devices', // Важно: должно совпадать с POST!
                     include: [Device],
-                    required: false // Разрешаем пустую корзину
+                    required: false
                 }]
             });
             
-            // Гарантируем возврат массива
-            const basketDevices = basket?.BasketDevices || [];
-            
+            // 2. Форматируем ответ как в POST
             res.json({
                 success: true,
-                basket_devices: basketDevices
+                id: basket.id,
+                createdAt: basket.createdAt,
+                updatedAt: basket.updatedAt,
+                userId: basket.userId,
+                basket_devices: basket.basket_devices || [] // Гарантируем массив
             });
+            
         } catch (e) {
             console.error("Ошибка получения корзины:", e);
             res.status(500).json({
                 success: false,
                 message: "Ошибка сервера",
-                basket_devices: [] // Всегда возвращаем массив
+                basket_devices: []
             });
         }
     }
