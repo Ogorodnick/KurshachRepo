@@ -1,5 +1,5 @@
 import {makeAutoObservable} from "mobx";
-import {deleteBrand, deleteDevice, deleteType} from "../http/deviceAPI";
+import {deleteBrand, deleteDevice, deleteType, fetchDevices} from "../http/deviceAPI";
 
 
 export default class DeviceStore {
@@ -11,7 +11,7 @@ export default class DeviceStore {
         this._selectedBrand = {}
         this._page = 1
         this._totalCount = 0
-        this._limit = 3
+        this._limit = 2
         makeAutoObservable(this)
     }
 
@@ -26,13 +26,23 @@ export default class DeviceStore {
     }
 
     setSelectedType(type) {
-        this.setPage(1)
-        this._selectedType = type
-    }
-    setSelectedBrand(brand) {
-        this.setPage(1)
-        this._selectedBrand = brand
-    }
+        if (this._selectedType && this._selectedType.id === type?.id) {
+          this._selectedType = {};
+        } else {
+          this._selectedType = type;
+        }
+        this.setPage(1);
+      }
+      
+      setSelectedBrand(brand) {
+        if (this._selectedBrand && this._selectedBrand.id === brand?.id) {
+          this._selectedBrand = {};
+        } else {
+          this._selectedBrand = brand;
+        }
+        this.setPage(1);
+      }
+      
     setPage(page) {
         this._page = page
     }
@@ -91,5 +101,21 @@ export default class DeviceStore {
             console.error("Delete error:", e)
         }
     }
+
+    async fetchDevices() {
+        try {
+          const data = await fetchDevices(
+            this.selectedType.id || null,
+            this.selectedBrand.id || null,
+            this.page,
+            this.limit
+          );
+          this.setDevices(data.rows);
+          this.setTotalCount(data.count);
+        } catch (e) {
+          console.error("Ошибка при загрузке устройств:", e);
+        }
+      }
+      
 
 }
