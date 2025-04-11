@@ -30,7 +30,6 @@ const Auth = observer(() => {
             user.setIsAuth(true);
             navigate(SHOP_ROUTE);
         } catch (e) {
-            // Улучшенная обработка ошибок
             setError(e.response?.data?.message || e.message || 'Произошла ошибка');
         } finally {
             setLoading(false);

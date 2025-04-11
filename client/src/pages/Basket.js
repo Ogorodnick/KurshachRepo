@@ -28,7 +28,7 @@ const Basket = observer(() => {
     const handleRemove = async (id) => {
         try {
             await removeFromBasket(id);
-            basket.removeItem(id); // Используем новый метод хранилища
+            basket.removeItem(id);
         } catch (e) {
             alert(e.response?.data?.message || 'Ошибка при удалении');
         }

@@ -10,13 +10,13 @@ import Container from "react-bootstrap/Container";
 
 const NavBar = observer(() => {
     const { user, basket } = useContext(Context);
-    const navigate = useNavigate(); // Используем useNavigate вместо useHistory
+    const navigate = useNavigate();
 
     const logOut = () => {
         user.setUser({});
         user.setIsAuth(false);
-        localStorage.removeItem('token'); // Добавляем очистку токена
-        navigate(LOGIN_ROUTE); // Перенаправляем на страницу входа
+        localStorage.removeItem('token');
+        navigate(LOGIN_ROUTE);
     };
     
 
@@ -29,7 +29,7 @@ const NavBar = observer(() => {
                         {user.isAuth && user.user.role === 'ADMIN' &&(
                             <Button
                                 variant={"outline-light"}
-                                onClick={() => navigate(ADMIN_ROUTE)} // Заменили history.push на navigate
+                                onClick={() => navigate(ADMIN_ROUTE)}
                             >
                                 Админ панель
                             </Button>
@@ -56,7 +56,7 @@ const NavBar = observer(() => {
                     <Nav className="ml-auto" style={{ color: 'white' }}>
                         <Button 
                             variant={"outline-light"} 
-                            onClick={() => navigate(LOGIN_ROUTE)} // Заменили history.push на navigate
+                            onClick={() => navigate(LOGIN_ROUTE)}
                         >
                             Авторизация
                         </Button>

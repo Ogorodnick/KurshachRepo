@@ -5,7 +5,6 @@ export const getBasket = async () => {
     return data
 }
 
-// basketAPI.js
 export const fetchBasket = async () => {
     try {
         const { data } = await $authHost.get('api/basket');

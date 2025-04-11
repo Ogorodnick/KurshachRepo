@@ -6,11 +6,10 @@ import { observer } from "mobx-react-lite";
 import { Context } from "./index";
 import { check } from "./http/userAPI";
 import { Spinner } from "react-bootstrap";
-import { fetchBasket } from "./http/basketAPI"; // Добавьте этот импорт
+import { fetchBasket } from "./http/basketAPI";
 
-// App.js
 const App = observer(() => {
-    const { user, basket } = useContext(Context); // Добавляем basket
+    const { user, basket } = useContext(Context); 
     const [loading, setLoading] = useState(true);
 
     const checkAuth = useCallback(async () => {
@@ -23,25 +22,21 @@ const App = observer(() => {
             user.setUser(userData);
             user.setIsAuth(true);
             
-            // Добавляем загрузку корзины после успешной аутентификации
             const basketData = await fetchBasket();
             basket.setBasket(basketData);
         } catch (e) {
             localStorage.removeItem('token');
             user.setUser({});
             user.setIsAuth(false);
-            basket.setBasket([]); // Очищаем корзину при ошибке
+            basket.setBasket([]); 
         } finally {
             setLoading(false);
         }
-    }, [user, basket]); // Добавляем basket в зависимости
-    // ... остальной код
-
+    }, [user, basket]); 
     useEffect(() => {
         checkAuth();
     }, [checkAuth]);
 
- // Теперь используем колбэк как зависимость
 
     if (loading) {
         return (

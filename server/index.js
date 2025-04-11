@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5000
 
 const app = express()
 app.use(cors({
-    origin: 'http://localhost:3000', // Ваш клиентский URL
+    origin: 'http://localhost:3000',
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
@@ -22,7 +22,6 @@ app.use(express.static(path.resolve(__dirname, 'static')))
 app.use(fileUpload({}))
 app.use('/api', router)
 
-// Обработка ошибок, последний Middleware
 app.use(errorHandler)
 
 const start = async () => {

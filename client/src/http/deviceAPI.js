@@ -47,13 +47,11 @@ export const deleteDevice = async (id) => {
     return data;
 }
 
-// Для брендов
 export const deleteBrand = async (id) => {
     const {data} = await $authHost.delete(`api/brand/${id}`);
     return data;
 }
 
-// Для типов
 export const deleteType = async (id) => {
     const {data} = await $authHost.delete(`api/type/${id}`);
     return data;
