@@ -59,10 +59,10 @@ Rating.belongsTo(User)
 Basket.hasMany(BasketDevice)
 BasketDevice.belongsTo(Basket)
 
-Type.hasMany(Device)
+Type.hasMany(Device, { onDelete: 'CASCADE', hooks: true})
 Device.belongsTo(Type)
 
-Brand.hasMany(Device)
+Brand.hasMany(Device, { onDelete: 'CASCADE', hooks:true})
 Device.belongsTo(Brand)
 
 Device.hasMany(Rating)
@@ -88,7 +88,6 @@ module.exports = {
     TypeBrand,
     DeviceInfo
 }
-
 
 
 

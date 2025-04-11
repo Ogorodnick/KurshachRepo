@@ -13,6 +13,16 @@ class BrandController {
         return res.json(brands)
     }
 
+    async delete(req, res) {
+        try {
+            const {id} = req.params
+            await Brand.destroy({where: {id}})
+            return res.json({message: 'Бренд удален'})
+        } catch (e) {
+            return ApiError.internal(e.message)
+        }
+    }
+    
 }
 
 module.exports = new BrandController()

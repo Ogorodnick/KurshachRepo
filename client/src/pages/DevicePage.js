@@ -3,7 +3,7 @@ import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import bigStar from '../assets/bigStar.png';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchOneDevice } from "../http/deviceAPI";
-import { addToBasket } from "../http/basketAPI"; // Убрали неиспользуемый fetchBasket
+import { addToBasket } from "../http/basketAPI";
 import { Context } from "../index";
 import { LOGIN_ROUTE } from "../utils/consts";
 
@@ -24,10 +24,8 @@ const DevicePage = () => {
             const response = await addToBasket(device.id);
             console.log("Полный ответ сервера:", response);
             
-            // Используем правильное имя поля (basket_devices вместо basketDevices)
             basket.setBasket(response.basket_devices || []);
             
-            alert('Товар добавлен в корзину!');
         } catch (e) {
             console.error("Ошибка добавления:", e);
             alert(e.response?.data?.message || 'Ошибка');
@@ -38,7 +36,9 @@ const DevicePage = () => {
         <Container className="mt-3">
             <Row>
                 <Col md={4}>
+                    <h3>{device.name}</h3>
                     <Image 
+                        
                         width={300} 
                         height={300} 
                         src={process.env.REACT_APP_API_URL + device.img}
@@ -46,21 +46,6 @@ const DevicePage = () => {
                     />
                 </Col>
                 <Col md={4}>
-                    <Row className="d-flex flex-column align-items-center">
-                        <h2>{device.name}</h2>
-                        <div
-                            className="d-flex align-items-center justify-content-center"
-                            style={{
-                                background: `url(${bigStar}) no-repeat center center`,
-                                width: 240,
-                                height: 240,
-                                backgroundSize: 'cover',
-                                fontSize: 64
-                            }}
-                        >
-                            {device.rating}
-                        </div>
-                    </Row>
                 </Col>
                 <Col md={4}>
                     <Card

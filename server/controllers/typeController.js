@@ -13,6 +13,16 @@ class TypeController {
         return res.json(types)
     }
 
+    async delete(req, res) {
+        try {
+            const {id} = req.params
+            await Type.destroy({where: {id}})
+            return res.json({message: 'Категория удалена'})
+        } catch (e) {
+            return ApiError.internal(e.message)
+        }
+    }
+
 }
 
 module.exports = new TypeController()

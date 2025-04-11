@@ -1,4 +1,6 @@
 import {makeAutoObservable} from "mobx";
+import {deleteBrand, deleteDevice, deleteType} from "../http/deviceAPI";
+
 
 export default class DeviceStore {
     constructor() {
@@ -62,4 +64,32 @@ export default class DeviceStore {
     get limit() {
         return this._limit
     }
+
+    async deleteDevice(id) {
+        try {
+            await deleteDevice(id)
+            this._devices = this._devices.filter(d => d.id !== id)
+        } catch (e) {
+            console.error("Delete error:", e)
+        }
+    }
+
+    async deleteBrand(id) {
+        try {
+            await deleteBrand(id)
+            this._brands = this._brands.filter(b => b.id !== id)
+        } catch (e) {
+            console.error("Delete error:", e)
+        }
+    }
+
+    async deleteType(id) {
+        try {
+            await deleteType(id)
+            this._types = this._types.filter(t => t.id !== id)
+        } catch (e) {
+            console.error("Delete error:", e)
+        }
+    }
+
 }

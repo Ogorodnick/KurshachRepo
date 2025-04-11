@@ -61,6 +61,16 @@ class DeviceController {
         )
         return res.json(device)
     }
+
+    async delete(req, res) {
+        try {
+            const {id} = req.params
+            await Device.destroy({where: {id}})
+            return res.json({message: 'Товар успешно удален'})
+        } catch (e) {
+            return ApiError.internal(e.message)
+        }
+    }
 }
 
 module.exports = new DeviceController()
